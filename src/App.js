@@ -1,26 +1,48 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component, Fragment } from 'react';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import { connect } from 'react-redux';
+
+import { GlobalStyle, Main, MainWrapper } from './style';
+
+import Header from './commom/header';
+import WrapperMid from './_partial/wrapper-mid';
+import WrapperRight from './_partial/wrapper-right';
+
+import { Iconfont } from './public/iconfont/iconfont';
+import Axios from 'axios';
+
+class App extends Component{
+  render() {
+    return (
+      <Fragment>
+        <GlobalStyle />
+        <Iconfont />
+        <Main>
+          <MainWrapper>
+            <Header></Header>
+            <WrapperMid></WrapperMid>
+            <WrapperRight></WrapperRight>
+          </MainWrapper>
+        </Main>
+      </Fragment>
+    );
+  }
+  componentDidMount() {
+    Axios.get('/api/userlist.json')
+      .then(result => {
+        const action = {
+          type: 'UPDATE_USER_LIST',
+          value: result.data.data
+        };
+        this.props.updateUserList(action);
+      })
+  }
 }
 
-export default App;
+const mapDispatchToProps = dispatch => ({
+  updateUserList(action) {
+    return dispatch(action);
+  }
+})
+
+export default connect(null, mapDispatchToProps)(App);
